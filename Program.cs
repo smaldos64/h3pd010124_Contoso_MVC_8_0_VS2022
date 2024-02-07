@@ -15,16 +15,6 @@ namespace Contoso_MVC_8_0_VS2022
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
             // ==> LTPE
 
-            //var testService = new ServiceCollection();
-            //testService.AddDbContext<SchoolContext>(options =>
-            //    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-            //testService.AddDatabaseDeveloperPageExceptionFilter();
-            //testService.AddControllersWithViews();
-
-            //var serviceProvider = testService.BuildServiceProvider();
-            //var DatabaseContext = serviceProvider.GetRequiredService<SchoolContext>();
-            //DbInitializer.Initialize(DatabaseContext);
-
             // LTPE ==>
             builder.Services.AddDbContext<SchoolContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
