@@ -21,19 +21,17 @@ namespace Contoso_MVC_8_0_VS2022
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
             // Kræver installation af Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore
             // pakke !!!
-
-            ServiceCollection MyServices = new ServiceCollection();
-            MyServices.AddDbContext<SchoolContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-            ServiceProvider MyServiceProvider = MyServices.BuildServiceProvider();
-            var DatabaseContext = MyServiceProvider.GetRequiredService<SchoolContext>();
-            DbInitializer.Initialize(DatabaseContext);
             // ==> LTPE
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
+
+            // LTPE ==>
+            // Ensure database creation and seeding before app starts
+            EnsureDatabaseCreatedAndSeeded(app);
+            // ==> LTPE
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -55,6 +53,16 @@ namespace Contoso_MVC_8_0_VS2022
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
+        }
+
+        private static void EnsureDatabaseCreatedAndSeeded(WebApplication app)
+        {
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<SchoolContext>();
+                dbContext.Database.EnsureCreated();
+                DbInitializer.Initialize(dbContext);
+            }
         }
     }
 }
